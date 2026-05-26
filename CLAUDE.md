@@ -34,8 +34,9 @@ vue-migrate/
 │   │       └── main.scss         # Global entry — imports all partials
 │   ├── components/
 │   │   ├── layout/
-│   │   │   ├── AppShell.vue      # Root layout wrapper
-│   │   │   └── Sidebar.vue       # Navigation sidebar
+│   │   │   ├── AppShell.vue      # Root layout wrapper — 3-column grid (sidebar | content | now-playing panel)
+│   │   │   ├── Sidebar.vue       # Navigation sidebar
+│   │   │   └── NowPlayingPanel.vue  # Persistent right panel — album art, track info, controls
 │   │   ├── player/
 │   │   │   ├── PlayerBar.vue     # Fixed bottom bar (main player UI)
 │   │   │   ├── ProgressBar.vue   # Seek slider
@@ -121,8 +122,8 @@ actions: showLoading, hideLoading
 ### `audioMixin.js`
 - Owns the single `new Audio()` instance (attached to `this.$audio`)
 - Exposes: `audioPlay()`, `audioPause()`, `audioSeek(time)`, `audioSetVolume(vol)`
-- Watches `currentTrack` from store → replaces `src` and auto-plays
-- Emits `timeupdate` → commits `SET_TIME` every 250 ms via `requestAnimationFrame`
+- `currentTrack` watcher: calls `pause()` → sets `src` → calls `load()` (resets `currentTime` to 0 synchronously) → calls `play()` if `isPlaying`. The `load()` is critical: without it, `playTrack` commits `SET_TIME({ currentTime: 0 })` after `SET_TRACK`, and if old `audio.currentTime > 1` the seek aborts the in-flight `play()` call via a silent `AbortError`.
+- Emits `timeupdate` → commits `SET_TIME` every 250 ms
 
 ### `durationMixin.js`
 - Method: `formatDuration(seconds) → '3:47'`

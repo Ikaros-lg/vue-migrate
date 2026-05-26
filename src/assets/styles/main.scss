@@ -1,0 +1,22 @@
+@use '_reset';
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-full);
+
+  &:hover {
+    background: var(--text-2);
+  }
+}
+
+::selection {
+  background: rgba(124, 106, 247, 0.3);
+}
